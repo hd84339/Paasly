@@ -14,12 +14,12 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-    origin: "http://localhost:3000", // Allow frontend URL
-    credentials: true // Allow cookies to be sent
+    origin: "http://localhost:3000",
+    credentials: true
 }));
 app.use(express.json());
 
-// Session Middleware
+// ✅ FIXED Session Middleware
 app.use(
     session({
         secret: process.env.COOKIE_KEY || 'secretKey',
@@ -29,7 +29,7 @@ app.use(
             mongoUrl: process.env.MONGO_URI,
         }),
         cookie: {
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            maxAge: 30 * 24 * 60 * 60 * 1000,
             secure: process.env.NODE_ENV === 'production'
         }
     })
