@@ -1,0 +1,11 @@
+{
+  "name": "paasly-monorepo",
+  "version": "1.0.0",
+  "description": "Root package for Paasly monorepo",
+  "scripts": {
+    "build": "echo 'Please specify a root directory (frontend, backend, or shopkeeper-partner) in your deployment settings or run builds manually.'",
+    "start": "echo 'Please specify a root directory (frontend, backend, or shopkeeper-partner) in your deployment settings or run starts manually.'"
+  },
+  "author": "",
+  "license": "ISC"
+}
