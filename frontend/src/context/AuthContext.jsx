@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUser = async () => {
         try {
-            const res = await fetch("http://localhost:5000/api/auth/current_user", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/current_user`, {
                 credentials: "include"
             });
             if (res.ok) {
@@ -38,12 +38,12 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const signInWithGoogle = () => {
-        window.location.href = "http://localhost:5000/api/auth/google";
+        window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`;
     };
 
     const login = async (email, password) => {
         try {
-            const res = await fetch("http://localhost:5000/api/auth/login", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
 
     const signup = async (name, email, password) => {
         try {
-            const res = await fetch("http://localhost:5000/api/auth/signup", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, email, password }),
@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        window.location.href = "http://localhost:5000/api/auth/logout";
+        window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/logout`;
     };
 
     return (

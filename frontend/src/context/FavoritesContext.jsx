@@ -17,7 +17,7 @@ export const FavoritesProvider = ({ children }) => {
         if (!user) { setFavorites([]); return; }
         setLoading(true);
         try {
-            const res = await fetch("http://localhost:5000/api/favorites", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites`, {
                 credentials: "include",
             });
             if (res.ok) {
@@ -48,7 +48,7 @@ export const FavoritesProvider = ({ children }) => {
         );
 
         try {
-            const res = await fetch(`http://localhost:5000/api/favorites/${shopId}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites/${shopId}`, {
                 method,
                 credentials: "include",
             });

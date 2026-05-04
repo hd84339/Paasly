@@ -17,7 +17,7 @@ router.get(
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
         // Successful authentication, redirect home.
-        res.redirect('http://localhost:3000');
+        res.redirect(process.env.FRONTEND_URL);
     }
 );
 
@@ -27,7 +27,7 @@ router.get(
 router.get('/logout', (req, res) => {
     req.logout((err) => {
         if (err) { return next(err); }
-        res.redirect('http://localhost:3000');
+        res.redirect(process.env.FRONTEND_URL);
     });
 });
 
