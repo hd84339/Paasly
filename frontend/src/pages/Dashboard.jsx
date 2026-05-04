@@ -1,25 +1,22 @@
-"use client";
-
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { LogOut, User, Mail, Shield, Calendar, Settings, Bell, Heart, ShoppingBag } from "lucide-react";
-import { useFavorites } from "@/context/FavoritesContext";
-import { getServiceById } from "@/data/services";
-import Link from "next/link";
+import { useAuth } from "../context/AuthContext";
+import { useFavorites } from "../context/FavoritesContext";
+import { getServiceById } from "../data/services";
 
-export default function DashboardPage() {
+export default function Dashboard() {
     const { user, loading, logout } = useAuth();
-    const router = useRouter();
+    const navigate = useNavigate();
     const { favorites, isFavorite, toggleFavorite } = useFavorites();
-    const [activeTab, setActiveTab] = useState<"activity" | "favorites" | "security">("activity");
-    const [heartAnim, setHeartAnim] = useState<number | null>(null);
+    const [activeTab, setActiveTab] = useState("activity");
+    const [heartAnim, setHeartAnim] = useState(null);
 
     useEffect(() => {
         if (!loading && !user) {
-            router.push("/login");
+            navigate("/login");
         }
-    }, [user, loading, router]);
+    }, [user, loading, navigate]);
 
     if (loading) {
         return (
@@ -31,7 +28,7 @@ export default function DashboardPage() {
 
     if (!user) return null;
 
-    const handleToggleFavorite = async (shopId: number) => {
+    const handleToggleFavorite = async (shopId) => {
         setHeartAnim(shopId);
         await toggleFavorite(shopId);
         setTimeout(() => setHeartAnim(null), 400);
@@ -144,7 +141,7 @@ export default function DashboardPage() {
                     <div className="lg:col-span-2 space-y-8">
                         {/* Tab Headers */}
                         <div className="flex gap-1 p-1 bg-gray-100 rounded-2xl w-fit">
-                            {(["activity", "favorites", "security"] as const).map((tab) => (
+                            {["activity", "favorites", "security"].map((tab) => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
@@ -182,7 +179,7 @@ export default function DashboardPage() {
                                     Once you start using the platform to book services, your activity history will appear here.
                                 </p>
                                 <button 
-                                    onClick={() => router.push("/")}
+                                    onClick={() => navigate("/")}
                                     className="mt-4 px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:shadow-lg transition-all"
                                 >
                                     Browse Services
@@ -208,7 +205,7 @@ export default function DashboardPage() {
                                             Tap the heart icon on any shop page to save it here for quick access.
                                         </p>
                                         <button
-                                            onClick={() => router.push("/")}
+                                            onClick={() => navigate("/")}
                                             className="px-6 py-2 bg-blue-600 text-white font-bold rounded-xl hover:shadow-lg transition-all text-sm"
                                         >
                                             Explore Shops
@@ -235,7 +232,7 @@ export default function DashboardPage() {
                                                         <p className="text-xs text-gray-500">{shop.distance} away</p>
                                                         <div className="mt-2 flex gap-2">
                                                             <Link
-                                                                href={`/shop/${shop.id}`}
+                                                                to={`/shop/${shop.id}`}
                                                                 className="text-xs px-3 py-1 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                                                             >
                                                                 View Shop

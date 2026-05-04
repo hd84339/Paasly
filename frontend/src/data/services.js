@@ -113,7 +113,7 @@ export const CATEGORIZED_SERVICES = [
     }
 ];
 
-export function getServiceById(id: number) {
+export function getServiceById(id) {
     for (const category of CATEGORIZED_SERVICES) {
         const found = category.items.find(item => item.id === id);
         if (found) return found;

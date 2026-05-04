@@ -1,7 +1,5 @@
-"use client";
-
-import Link from 'next/link';
-import { Facebook, Instagram, Twitter, Linkedin, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { FacebookIcon, InstagramIcon, TwitterIcon, LinkedinIcon, MailIcon, PhoneIcon, MapPinIcon, ArrowRightIcon } from 'lucide-react';
 
 export default function Footer() {
     return (
@@ -11,7 +9,7 @@ export default function Footer() {
 
                     {/* Column 1: Brand */}
                     <div className="space-y-6">
-                        <Link href="/" className="flex items-center gap-2">
+                        <Link to="/" className="flex items-center gap-2">
                             <span className="text-3xl font-bold italic tracking-tight font-sans text-[#2874f0]">
                                 Paasly
                             </span>
@@ -21,16 +19,16 @@ export default function Footer() {
                         </p>
                         <div className="flex space-x-4">
                             <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-[#2874f0] transition-colors group">
-                                <Facebook className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                                <FacebookIcon className="w-4 h-4 text-gray-400 group-hover:text-white" />
                             </a>
                             <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-[#E1306C] transition-colors group">
-                                <Instagram className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                                <InstagramIcon className="w-4 h-4 text-gray-400 group-hover:text-white" />
                             </a>
                             <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-[#1DA1F2] transition-colors group">
-                                <Twitter className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                                <TwitterIcon className="w-4 h-4 text-gray-400 group-hover:text-white" />
                             </a>
                             <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-[#0077b5] transition-colors group">
-                                <Linkedin className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                                <LinkedinIcon className="w-4 h-4 text-gray-400 group-hover:text-white" />
                             </a>
                         </div>
                     </div>
@@ -40,26 +38,26 @@ export default function Footer() {
                         <h3 className="text-lg font-semibold mb-6">Quick Links</h3>
                         <ul className="space-y-4">
                             <li>
-                                <Link href="/" className="text-gray-400 hover:text-[#2874f0] transition-colors text-sm flex items-center">
-                                    <ArrowRight className="w-3 h-3 mr-2" />
+                                <Link to="/" className="text-gray-400 hover:text-[#2874f0] transition-colors text-sm flex items-center">
+                                    <ArrowRightIcon className="w-3 h-3 mr-2" />
                                     Home
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/explore" className="text-gray-400 hover:text-[#2874f0] transition-colors text-sm flex items-center">
-                                    <ArrowRight className="w-3 h-3 mr-2" />
+                                <Link to="/explore" className="text-gray-400 hover:text-[#2874f0] transition-colors text-sm flex items-center">
+                                    <ArrowRightIcon className="w-3 h-3 mr-2" />
                                     Explore Services
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/about" className="text-gray-400 hover:text-[#2874f0] transition-colors text-sm flex items-center">
-                                    <ArrowRight className="w-3 h-3 mr-2" />
+                                <Link to="/about" className="text-gray-400 hover:text-[#2874f0] transition-colors text-sm flex items-center">
+                                    <ArrowRightIcon className="w-3 h-3 mr-2" />
                                     About Us
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/contact" className="text-gray-400 hover:text-[#2874f0] transition-colors text-sm flex items-center">
-                                    <ArrowRight className="w-3 h-3 mr-2" />
+                                <Link to="/contact" className="text-gray-400 hover:text-[#2874f0] transition-colors text-sm flex items-center">
+                                    <ArrowRightIcon className="w-3 h-3 mr-2" />
                                     Contact
                                 </Link>
                             </li>
@@ -71,17 +69,17 @@ export default function Footer() {
                         <h3 className="text-lg font-semibold mb-6">Contact Us</h3>
                         <ul className="space-y-4">
                             <li className="flex items-start">
-                                <MapPin className="w-5 h-5 text-[#2874f0] mr-3 mt-0.5 flex-shrink-0" />
+                                <MapPinIcon className="w-5 h-5 text-[#2874f0] mr-3 mt-0.5 flex-shrink-0" />
                                 <span className="text-gray-400 text-sm">
                                     123 Business Park, Main Street,<br />Borivali West, Mumbai - 400092
                                 </span>
                             </li>
                             <li className="flex items-center">
-                                <Phone className="w-5 h-5 text-[#2874f0] mr-3 flex-shrink-0" />
+                                <PhoneIcon className="w-5 h-5 text-[#2874f0] mr-3 flex-shrink-0" />
                                 <span className="text-gray-400 text-sm">+91 98765 43210</span>
                             </li>
                             <li className="flex items-center">
-                                <Mail className="w-5 h-5 text-[#2874f0] mr-3 flex-shrink-0" />
+                                <MailIcon className="w-5 h-5 text-[#2874f0] mr-3 flex-shrink-0" />
                                 <span className="text-gray-400 text-sm">support@paasly.com</span>
                             </li>
                         </ul>
@@ -99,7 +97,7 @@ export default function Footer() {
                                 placeholder="Enter your email"
                                 className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-[#2874f0] text-sm text-gray-300 placeholder-gray-500"
                             />
-                            <button className="w-full bg-[#2874f0] hover:bg-blue-600 text-white font-medium py-2.5 rounded-lg transition-colors text-sm">
+                            <button className="w-full bg-[#2874f0] hover:bg-blue-600 text-white font-medium py-2.5 rounded-lg transition-colors text-sm" type="button">
                                 Subscribe
                             </button>
                         </form>
@@ -112,9 +110,9 @@ export default function Footer() {
                         © {new Date().getFullYear()} Paasly. All rights reserved.
                     </p>
                     <div className="flex space-x-6 text-sm text-gray-500">
-                        <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-                        <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
-                        <Link href="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link>
+                        <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                        <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+                        <Link to="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link>
                     </div>
                 </div>
             </div>

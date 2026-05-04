@@ -1,33 +1,30 @@
-"use client";
-
-import Link from 'next/link';
-import { MapPin, Search, User, Star, LogIn, LogOut } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { CATEGORIZED_SERVICES } from '@/data/services';
-import { useAuth } from '@/context/AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
+import { MapPin, Search, User, Star, LogIn, LogOut } from 'lucide-react';
+import { CATEGORIZED_SERVICES } from '../data/services';
+import { useAuth } from '../context/AuthContext';
 
 // Flatten services for easier searching
 const ALL_SERVICES = CATEGORIZED_SERVICES.flatMap(cat => cat.items);
 
 export default function Navbar() {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<typeof ALL_SERVICES>([]);
+  const [results, setResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const router = useRouter();
-  const searchRef = useRef<HTMLDivElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const searchRef = useRef(null);
+  const profileRef = useRef(null);
   const { user, signInWithGoogle, logout } = useAuth();
 
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+    function handleClickOutside(event) {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowResults(false);
       }
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
         setShowProfileMenu(false);
       }
     }
@@ -37,7 +34,7 @@ export default function Navbar() {
     };
   }, []);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e) => {
     const value = e.target.value;
     setQuery(value);
 
@@ -68,15 +65,15 @@ export default function Navbar() {
     setShowResults(true);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      router.push(`/?query=${encodeURIComponent(query)}`);
+      navigate(`/?query=${encodeURIComponent(query)}`);
       setShowResults(false);
     }
   };
 
-  const handleSelectResult = (id: number) => {
-    router.push(`/shop/${id}`);
+  const handleSelectResult = (id) => {
+    navigate(`/shop/${id}`);
     setShowResults(false);
     setQuery('');
   };
@@ -88,7 +85,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Brand */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center gap-0">
+            <Link to="/" className="flex items-center gap-0">
               <img src="/logo.png" alt="Paasly Logo" className="h-16 w-auto object-contain" />
               <span className="text-3xl font-bold italic tracking-tight font-sans text-[#2874f0] pt-1.0 -ml-4">
                 aasly
@@ -188,7 +185,7 @@ export default function Navbar() {
                       <p className="text-xs text-gray-500 truncate">{user.email}</p>
                     </div>
                     <Link
-                      href="/dashboard"
+                      to="/dashboard"
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
                       onClick={() => setShowProfileMenu(false)}
                     >
@@ -208,13 +205,13 @@ export default function Navbar() {
             ) : (
               <div className="flex items-center space-x-3">
                 <Link
-                  href="/login"
+                  to="/login"
                   className="hidden sm:flex px-4 py-2 text-sm font-medium text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors"
                 >
                   Log In
                 </Link>
                 <Link
-                  href="/signup"
+                  to="/signup"
                   className="px-4 py-2 text-sm font-medium text-white bg-[#2874f0] hover:bg-blue-600 rounded-full shadow-sm shadow-blue-200 transition-all flex items-center"
                 >
                   <LogIn className="w-4 h-4 mr-1.5 sm:hidden" />

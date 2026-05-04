@@ -1,18 +1,5 @@
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { Star, MapPin } from 'lucide-react';
-import Image from 'next/image';
-
-interface ServiceCardProps {
-    id: number;
-    name: string;
-    category: string;
-    rating: number;
-    reviews: number;
-    distance: string;
-    isOpen: boolean;
-    imageUrl: string;
-    source?: 'internal' | 'external';
-}
 
 export default function ServiceCard({
     id,
@@ -24,15 +11,13 @@ export default function ServiceCard({
     isOpen,
     imageUrl,
     source = 'internal',
-}: ServiceCardProps) {
+}) {
     const isInternal = source === 'internal';
 
     return (
         <div className="flex flex-col bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden h-full">
             {/* 1. Fixed Image Height - Compact for 3-col mobile */}
             <div className="relative h-[100px] md:h-[150px] lg:h-[160px] w-full bg-gray-100">
-                {/* Using standard img tag for now to avoid next/image setup complexity with external URLs, 
-             but typically would use Next.js Image */}
                 <img
                     src={imageUrl}
                     alt={name}
@@ -62,7 +47,7 @@ export default function ServiceCard({
                 </p>
 
                 {/* Name (Max 1 line) */}
-                <h3 className="font-poppins font-semibold text-[var(--color-secondary)] text-xs md:text-base leading-tight truncate mb-1" title={name}>
+                <h3 className="font-semibold text-gray-900 text-xs md:text-base leading-tight truncate mb-1" title={name}>
                     {name}
                 </h3>
 
@@ -83,16 +68,15 @@ export default function ServiceCard({
                 <div className="flex-1"></div>
 
                 {/* Button (Pinned Bottom) */}
-                {/* Button (Pinned Bottom) */}
                 {isInternal ? (
-                    <Link href={`/shop/${id}`} className="w-full mt-1 md:mt-2">
-                        <button className="w-full py-1.5 md:py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white text-xs md:text-sm font-medium rounded-md transition-colors font-inter">
+                    <Link to={`/shop/${id}`} className="w-full mt-1 md:mt-2">
+                        <button className="w-full py-1.5 md:py-2 bg-[#2874f0] hover:bg-blue-600 text-white text-xs md:text-sm font-medium rounded-md transition-colors">
                             View Shop
                         </button>
                     </Link>
                 ) : (
-                    <Link href={`/shop/${id}`} className="w-full mt-1 md:mt-2">
-                        <button className="w-full py-1.5 md:py-2 border border-[var(--color-secondary)] text-[var(--color-secondary)] hover:bg-gray-50 text-xs md:text-sm font-medium rounded-md transition-colors font-inter">
+                    <Link to={`/shop/${id}`} className="w-full mt-1 md:mt-2">
+                        <button className="w-full py-1.5 md:py-2 border border-gray-900 text-gray-900 hover:bg-gray-50 text-xs md:text-sm font-medium rounded-md transition-colors">
                             View on Maps
                         </button>
                     </Link>

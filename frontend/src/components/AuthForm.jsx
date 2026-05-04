@@ -1,11 +1,5 @@
-"use client";
-
-import { useAuth } from "@/context/AuthContext";
-import Link from "next/link";
-
-interface AuthFormProps {
-    type: "login" | "signup";
-}
+import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const GoogleIcon = () => (
     <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -16,7 +10,7 @@ const GoogleIcon = () => (
     </svg>
 );
 
-export default function AuthForm({ type }: AuthFormProps) {
+export default function AuthForm({ type }) {
     const { signInWithGoogle } = useAuth();
 
     return (
@@ -55,14 +49,14 @@ export default function AuthForm({ type }: AuthFormProps) {
                 {type === "login" ? (
                     <>
                         New to Paasly?{" "}
-                        <Link href="/signup" className="text-blue-600 hover:text-blue-700 transition-colors font-semibold">
+                        <Link to="/signup" className="text-blue-600 hover:text-blue-700 transition-colors font-semibold">
                             Create an account
                         </Link>
                     </>
                 ) : (
                     <>
                         Already have an account?{" "}
-                        <Link href="/login" className="text-blue-600 hover:text-blue-700 transition-colors font-semibold">
+                        <Link to="/login" className="text-blue-600 hover:text-blue-700 transition-colors font-semibold">
                             Sign in
                         </Link>
                     </>

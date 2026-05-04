@@ -1,14 +1,10 @@
-"use client";
-
-import ServiceCard from "@/components/common/ServiceCard";
-import Link from "next/link";
+import { useSearchParams, Link } from 'react-router-dom';
 import { ChevronRight } from "lucide-react";
-import { CATEGORIZED_SERVICES } from "@/data/services";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import ServiceCard from "../components/ServiceCard";
+import { CATEGORIZED_SERVICES } from "../data/services";
 
-function HomeContent() {
-  const searchParams = useSearchParams();
+export default function Home() {
+  const [searchParams] = useSearchParams();
   const query = searchParams.get('query')?.toLowerCase() || '';
 
   const filteredServices = CATEGORIZED_SERVICES.map(section => {
@@ -51,12 +47,12 @@ function HomeContent() {
               <div key={index} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
                 {/* Section Header */}
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg md:text-xl font-bold font-poppins text-[var(--color-secondary)]">
+                  <h2 className="text-lg md:text-xl font-bold text-gray-900">
                     {section.title}
                   </h2>
                   <Link
-                    href="#"
-                    className="flex items-center text-sm font-medium text-[#2874f0] hover:text-[var(--color-primary)] transition-colors"
+                    to="#"
+                    className="flex items-center text-sm font-medium text-[#2874f0] hover:text-blue-700 transition-colors"
                   >
                     View All
                     <ChevronRight className="w-4 h-4 ml-1" />
@@ -76,7 +72,7 @@ function HomeContent() {
                       distance={service.distance}
                       isOpen={service.isOpen}
                       imageUrl={service.imageUrl}
-                      source={service.source as 'internal' | 'external'}
+                      source={service.source}
                     />
                   ))}
                 </div>
@@ -87,13 +83,5 @@ function HomeContent() {
 
       </div>
     </main>
-  );
-}
-
-export default function Home() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
-      <HomeContent />
-    </Suspense>
   );
 }

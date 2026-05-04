@@ -1,25 +1,30 @@
-"use client";
-
-import { use, useState } from 'react';
-import { getServiceById } from '@/data/services';
-import { notFound, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Star, MapPin, Clock, Share2, Heart } from 'lucide-react';
-import Link from 'next/link';
-import { useFavorites } from '@/context/FavoritesContext';
-import { useAuth } from '@/context/AuthContext';
+import { getServiceById } from '../data/services';
+import { useFavorites } from '../context/FavoritesContext';
+import { useAuth } from '../context/AuthContext';
 
-export default function ShopDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function ShopDetail() {
+    const { id } = useParams();
     const serviceId = parseInt(id);
     const service = getServiceById(serviceId);
-    const router = useRouter();
+    const navigate = useNavigate();
 
     const { user } = useAuth();
     const { isFavorite, toggleFavorite } = useFavorites();
     const [heartAnim, setHeartAnim] = useState(false);
 
     if (!service) {
-        notFound();
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
+                    <p className="text-gray-600 mb-6">Shop not found.</p>
+                    <Link to="/" className="text-[#2874f0] hover:underline">Back to Home</Link>
+                </div>
+            </div>
+        );
     }
 
     const isInternal = service.source === 'internal';
@@ -27,7 +32,7 @@ export default function ShopDetailsPage({ params }: { params: Promise<{ id: stri
 
     const handleToggleFavorite = async () => {
         if (!user) {
-            router.push('/login');
+            navigate('/login');
             return;
         }
         setHeartAnim(true);
@@ -45,7 +50,7 @@ export default function ShopDetailsPage({ params }: { params: Promise<{ id: stri
                     className="w-full h-full object-cover"
                 />
                 <div className="absolute top-4 left-4">
-                    <Link href="/" className="bg-white/90 p-2 rounded-full hover:bg-white transition-colors">
+                    <Link to="/" className="bg-white/90 p-2 rounded-full hover:bg-white transition-colors">
                         ← Back
                     </Link>
                 </div>
@@ -60,7 +65,7 @@ export default function ShopDetailsPage({ params }: { params: Promise<{ id: stri
                             <span className="inline-block px-2 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-md mb-2">
                                 {service.category}
                             </span>
-                            <h1 className="text-2xl md:text-3xl font-bold font-poppins text-gray-900 mb-1">
+                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
                                 {service.name}
                             </h1>
                             <div className="flex items-center text-gray-600 text-sm md:text-base">
@@ -117,7 +122,7 @@ export default function ShopDetailsPage({ params }: { params: Promise<{ id: stri
                     {!user && (
                         <div className="mb-4 px-4 py-3 bg-blue-50 border border-blue-100 rounded-xl text-sm text-blue-700 flex items-center gap-2">
                             <Heart className="w-4 h-4 text-blue-400" />
-                            <span><Link href="/login" className="font-semibold underline">Log in</Link> to save this shop to your favorites.</span>
+                            <span><Link to="/login" className="font-semibold underline">Log in</Link> to save this shop to your favorites.</span>
                         </div>
                     )}
 
@@ -134,11 +139,11 @@ export default function ShopDetailsPage({ params }: { params: Promise<{ id: stri
                     {/* Primary Action */}
                     <div className="sticky bottom-0 bg-white pt-2 border-t border-gray-100 md:static md:border-t-0 md:pt-0">
                         {isInternal ? (
-                            <button className="w-full md:w-auto md:px-8 py-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white font-semibold rounded-xl shadow-lg transition-transform active:scale-95">
+                            <button className="w-full md:w-auto md:px-8 py-3 bg-[#2874f0] hover:bg-blue-600 text-white font-semibold rounded-xl shadow-lg transition-transform active:scale-95">
                                 Book Service / Order Now
                             </button>
                         ) : (
-                            <button className="w-full md:w-auto md:px-8 py-3 border-2 border-[var(--color-secondary)] text-[var(--color-secondary)] font-semibold rounded-xl hover:bg-gray-50 transition-colors">
+                            <button className="w-full md:w-auto md:px-8 py-3 border-2 border-gray-900 text-gray-900 font-semibold rounded-xl hover:bg-gray-50 transition-colors">
                                 View Direction on Google Maps
                             </button>
                         )}
