@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const GoogleIcon = () => (
     <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -11,14 +12,46 @@ const GoogleIcon = () => (
 );
 
 export default function AuthForm({ type }) {
-    const { signInWithGoogle } = useAuth();
+    const { signInWithGoogle, login, signup } = useAuth();
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+    });
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
+
+        try {
+            let result;
+            if (type === "login") {
+                result = await login(formData.email, formData.password);
+            } else {
+                result = await signup(formData.name, formData.email, formData.password);
+            }
+
+            if (result.success) {
+                navigate("/dashboard");
+            } else {
+                setError(result.message);
+            }
+        } catch (err) {
+            setError("Something went wrong. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="w-full max-w-md p-10 bg-white/70 backdrop-blur-3xl rounded-[2.5rem] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] border border-white/60 relative overflow-hidden group">
-            {/* Elegant Inner Rim Highlight */}
             <div className="absolute inset-0 rounded-[2.5rem] border border-white/40 pointer-events-none"></div>
             
-            <div className="text-center mb-10 relative z-10">
+            <div className="text-center mb-8 relative z-10">
                 <div className="mx-auto w-16 h-16 bg-white shadow-sm border border-slate-100 rounded-2xl flex items-center justify-center mb-6">
                     <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-inner"></div>
                 </div>
@@ -32,31 +65,88 @@ export default function AuthForm({ type }) {
                 </p>
             </div>
 
-            <div className="relative z-10">
-                <button
-                    onClick={signInWithGoogle}
-                    className="group relative w-full h-14 bg-white border border-slate-200/80 rounded-2xl flex items-center justify-center gap-3 text-slate-700 font-semibold hover:border-blue-500/30 hover:bg-slate-50 transition-all duration-300 shadow-sm hover:shadow-[0_8px_20px_-6px_rgba(59,130,246,0.2)] hover:-translate-y-0.5 overflow-hidden"
-                >
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative flex items-center gap-3">
-                        <GoogleIcon />
-                        <span>{type === "login" ? "Sign in with Google" : "Sign up with Google"}</span>
-                    </div>
-                </button>
-            </div>
+            {error && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl animate-shake">
+                    {error}
+                </div>
+            )}
 
-            <p className="mt-10 text-center text-sm text-slate-500 relative z-10 font-medium tracking-wide">
+            <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
+                {type === "signup" && (
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1.5 ml-1">Full Name</label>
+                        <input
+                            type="text"
+                            required
+                            className="w-full h-12 px-4 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                            placeholder="John Doe"
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        />
+                    </div>
+                )}
+                <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1.5 ml-1">Email Address</label>
+                    <input
+                        type="email"
+                        required
+                        className="w-full h-12 px-4 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                        placeholder="name@example.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1.5 ml-1">Password</label>
+                    <input
+                        type="password"
+                        required
+                        className="w-full h-12 px-4 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    />
+                </div>
+
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-12 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-slate-900/10"
+                >
+                    {loading ? "Processing..." : type === "login" ? "Sign In" : "Create Account"}
+                </button>
+
+                <div className="relative my-8">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-200"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                        <span className="px-3 bg-white/70 backdrop-blur-md text-slate-500 font-medium italic">or continue with</span>
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    onClick={signInWithGoogle}
+                    className="group relative w-full h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center gap-3 text-slate-700 font-semibold hover:border-blue-500/30 hover:bg-slate-50 transition-all shadow-sm"
+                >
+                    <GoogleIcon />
+                    <span>Google</span>
+                </button>
+            </form>
+
+            <p className="mt-8 text-center text-sm text-slate-500 relative z-10 font-medium">
                 {type === "login" ? (
                     <>
                         New to Paasly?{" "}
-                        <Link to="/signup" className="text-blue-600 hover:text-blue-700 transition-colors font-semibold">
+                        <Link to="/signup" className="text-blue-600 hover:text-blue-700 transition-colors font-bold">
                             Create an account
                         </Link>
                     </>
                 ) : (
                     <>
                         Already have an account?{" "}
-                        <Link to="/login" className="text-blue-600 hover:text-blue-700 transition-colors font-semibold">
+                        <Link to="/login" className="text-blue-600 hover:text-blue-700 transition-colors font-bold">
                             Sign in
                         </Link>
                     </>

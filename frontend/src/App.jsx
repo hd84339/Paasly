@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { FavoritesProvider } from './context/FavoritesContext';
+import { LocationProvider } from './context/LocationContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -13,29 +14,31 @@ import './App.css';
 function App() {
   return (
     <AuthProvider>
-      <FavoritesProvider>
-        <Router>
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <div className="flex-grow">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/shop/:id" element={<ShopDetail />} />
-                {/* Fallback */}
-                <Route path="*" element={
-                  <div className="min-h-screen flex items-center justify-center">
-                    <h1 className="text-2xl font-bold">404 - Page Not Found</h1>
-                  </div>
-                } />
-              </Routes>
+      <LocationProvider>
+        <FavoritesProvider>
+          <Router>
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <div className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/shop/:id" element={<ShopDetail />} />
+                  {/* Fallback */}
+                  <Route path="*" element={
+                    <div className="min-h-screen flex items-center justify-center">
+                      <h1 className="text-2xl font-bold">404 - Page Not Found</h1>
+                    </div>
+                  } />
+                </Routes>
+              </div>
+              <Footer />
             </div>
-            <Footer />
-          </div>
-        </Router>
-      </FavoritesProvider>
+          </Router>
+        </FavoritesProvider>
+      </LocationProvider>
     </AuthProvider>
   );
 }

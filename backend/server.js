@@ -13,8 +13,21 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    process.env.SHOPKEEPER_URL,
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://localhost:5174',
+    'http://127.0.0.1:5174',
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:1576',
+    'http://localhost:1575'
+].filter(Boolean);
+
 app.use(cors({
-    origin: [process.env.FRONTEND_URL, process.env.SHOPKEEPER_URL],
+    origin: allowedOrigins,
     credentials: true
 }));
 app.use(express.json());
@@ -47,6 +60,7 @@ mongoose.connect(process.env.MONGO_URI)
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/favorites', require('./routes/favorites'));
+app.use('/api/shops', require('./routes/shops'));
 
 app.get('/', (req, res) => {
     res.send('API is running...');

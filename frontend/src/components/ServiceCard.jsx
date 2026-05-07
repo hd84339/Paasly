@@ -11,8 +11,9 @@ export default function ServiceCard({
     isOpen,
     imageUrl,
     source = 'internal',
+    isPartner = false,
 }) {
-    const isInternal = source === 'internal';
+    const isInternal = source === 'internal' || isPartner;
 
     return (
         <div className="flex flex-col bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden h-full">
@@ -24,15 +25,22 @@ export default function ServiceCard({
                     className="w-full h-full object-cover"
                 />
                 {/* Availability Badge */}
-                <div className="absolute top-2 left-2">
-                    {/* Internal: Open/Closed. External: Google Info badge */}
+                <div className="absolute top-2 left-2 flex flex-col gap-1">
+                    {/* Partner Badge */}
+                    {isPartner && (
+                        <span className="px-2 py-0.5 text-[10px] md:text-xs font-bold rounded-full bg-yellow-400 text-black shadow-sm flex items-center gap-1">
+                            <Star className="w-2.5 h-2.5 fill-current" />
+                            Partner
+                        </span>
+                    )}
+                    {/* Availability Badge */}
                     {isInternal ? (
-                        <span className={`px-2 py-0.5 text-[10px] md:text-xs font-medium rounded-full ${isOpen ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                        <span className={`px-2 py-0.5 text-[10px] md:text-xs font-medium rounded-full w-fit ${isOpen ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
                             }`}>
                             {isOpen ? 'Open' : 'Closed'}
                         </span>
                     ) : (
-                        <span className="px-2 py-0.5 text-[10px] md:text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                        <span className="px-2 py-0.5 text-[10px] md:text-xs font-medium rounded-full bg-blue-100 text-blue-700 w-fit">
                             Google Info
                         </span>
                     )}
