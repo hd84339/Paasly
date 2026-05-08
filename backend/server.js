@@ -5,9 +5,11 @@ const passport = require('passport');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 require('dotenv').config();
+const shopkeeperRoutes = require("./routes/shopkeeper");
 
 // Passport Config
 require('./config/passport')(passport);
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -61,6 +63,8 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/favorites', require('./routes/favorites'));
 app.use('/api/shops', require('./routes/shops'));
+app.use("/shopkeeper", shopkeeperRoutes);
+
 
 app.get('/', (req, res) => {
     res.send('API is running...');
