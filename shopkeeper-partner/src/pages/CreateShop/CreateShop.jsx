@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -15,11 +15,17 @@ function CreateShop() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    
+    // Autocomplete states
+    const [addressQuery, setAddressQuery] = useState("");
+    const [suggestions, setSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const timeoutRef = useRef(null);
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/auth/current_user", { withCredentials: true });
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/current_user`, { withCredentials: true });
                 if (response.data) {
                     setUser(response.data);
                 } else {
@@ -39,23 +45,64 @@ function CreateShop() {
         });
     };
 
+    const fetchSuggestions = async (query) => {
+        if (!query.trim()) {
+            setSuggestions([]);
+            return;
+        }
+        try {
+            const res = await axios.get(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5`);
+            setSuggestions(res.data);
+        } catch (err) {
+            console.error("Error fetching location data", err);
+        }
+    };
+
+    const handleAddressChange = (e) => {
+        const val = e.target.value;
+        setAddressQuery(val);
+        setShowSuggestions(true);
+        
+        // Debounce fetching
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => {
+            fetchSuggestions(val);
+        }, 500);
+    };
+
+    const selectLocation = (location) => {
+        setAddressQuery(location.display_name);
+        setFormData({
+            ...formData,
+            address: location.display_name,
+            lat: parseFloat(location.lat),
+            lng: parseFloat(location.lon),
+        });
+        setShowSuggestions(false);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!user) return;
+
+        if (!formData.lat || !formData.lng) {
+            setError("Please select a valid address from the dropdown suggestions to get coordinates.");
+            return;
+        }
 
         setLoading(true);
         setError("");
 
         try {
             const response = await axios.post(
-                "http://localhost:5000/shopkeeper/create-shop",
+                `${import.meta.env.VITE_API_URL}/shopkeeper/create-shop`,
                 { ...formData, userId: user._id },
                 { withCredentials: true }
             );
 
             console.log(response.data);
             alert("Congratulations! Your shop has been created.");
-            navigate("/dashboard"); // Assuming a dashboard exists
+            navigate("/dashboard");
 
         } catch (error) {
             console.error(error);
@@ -149,42 +196,36 @@ function CreateShop() {
                                         />
                                     </div>
 
-                                    <div className="md:col-span-2">
+                                    <div className="md:col-span-2 relative">
                                         <label className="block text-sm font-semibold text-slate-700 mb-2">Shop Address</label>
-                                        <textarea
-                                            name="address"
-                                            required
-                                            rows="2"
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none resize-none"
-                                            placeholder="Enter full address"
-                                            onChange={handleChange}
-                                        ></textarea>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-semibold text-slate-700 mb-2">Latitude</label>
                                         <input
-                                            type="number"
-                                            step="any"
-                                            name="lat"
+                                            type="text"
+                                            value={addressQuery}
                                             required
                                             className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
-                                            placeholder="12.9716"
-                                            onChange={handleChange}
+                                            placeholder="Start typing your address..."
+                                            onChange={handleAddressChange}
+                                            onFocus={() => setShowSuggestions(true)}
+                                            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                                         />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-semibold text-slate-700 mb-2">Longitude</label>
-                                        <input
-                                            type="number"
-                                            step="any"
-                                            name="lng"
-                                            required
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
-                                            placeholder="77.5946"
-                                            onChange={handleChange}
-                                        />
+                                        {showSuggestions && suggestions.length > 0 && (
+                                            <ul className="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-auto">
+                                                {suggestions.map((loc) => (
+                                                    <li
+                                                        key={loc.place_id}
+                                                        className="px-4 py-3 hover:bg-slate-50 cursor-pointer text-sm text-slate-700 border-b border-slate-100 last:border-0"
+                                                        onMouseDown={() => selectLocation(loc)}
+                                                    >
+                                                        {loc.display_name}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                        {formData.lat && formData.lng && (
+                                            <p className="text-xs text-emerald-600 mt-2 font-medium">
+                                                ✓ Location coordinates locked: {formData.lat.toFixed(4)}, {formData.lng.toFixed(4)}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 

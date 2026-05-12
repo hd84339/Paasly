@@ -7,7 +7,13 @@ const router = express.Router();
 // @route   GET /api/auth/google
 // @desc    Auth with Google
 // @access  Public
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google', (req, res, next) => {
+    const state = req.query.source === 'shopkeeper' ? 'shopkeeper' : 'frontend';
+    passport.authenticate('google', { 
+        scope: ['profile', 'email'],
+        state: state
+    })(req, res, next);
+});
 
 // @route   GET /api/auth/google/callback
 // @desc    Google auth callback
@@ -16,8 +22,10 @@ router.get(
     '/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
-        // Successful authentication, redirect home.
-        res.redirect(process.env.FRONTEND_URL);
+        // Successful authentication, redirect to appropriate frontend based on state.
+        const state = req.query.state;
+        const returnTo = state === 'shopkeeper' ? process.env.SHOPKEEPER_URL : process.env.FRONTEND_URL;
+        res.redirect(returnTo);
     }
 );
 
@@ -27,7 +35,7 @@ router.get(
 router.get('/logout', (req, res) => {
     req.logout((err) => {
         if (err) { return next(err); }
-        res.redirect(process.env.FRONTEND_URL);
+        res.redirect(req.query.source === 'shopkeeper' ? process.env.SHOPKEEPER_URL : process.env.FRONTEND_URL);
     });
 });
 
@@ -42,7 +50,7 @@ router.get('/current_user', (req, res) => {
 // @desc    Register a new user
 // @access  Public
 router.post('/signup', async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     try {
         let user = await User.findOne({ email: email.toLowerCase() });
@@ -57,6 +65,7 @@ router.post('/signup', async (req, res) => {
             name,
             email: email.toLowerCase(),
             passwordHash,
+            role: role || 'user',
         });
 
         await user.save();
