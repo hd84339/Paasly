@@ -8,11 +8,13 @@ const router = express.Router();
 // @desc    Auth with Google
 // @access  Public
 router.get('/google', (req, res, next) => {
-    const state = req.query.source === 'shopkeeper' ? 'shopkeeper' : 'frontend';
-    passport.authenticate('google', { 
-        scope: ['profile', 'email'],
-        state: state
-    })(req, res, next);
+    req.session.source = req.query.source || 'user';
+    req.session.save((err) => {
+        if (err) return next(err);
+        passport.authenticate('google', { 
+            scope: ['profile', 'email']
+        })(req, res, next);
+    });
 });
 
 // @route   GET /api/auth/google/callback
@@ -20,12 +22,15 @@ router.get('/google', (req, res, next) => {
 // @access  Public
 router.get(
     '/google/callback',
-    passport.authenticate('google', { failureRedirect: '/' }),
+    passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
-        // Successful authentication, redirect to appropriate frontend based on state.
-        const state = req.query.state;
-        const returnTo = state === 'shopkeeper' ? process.env.SHOPKEEPER_URL : process.env.FRONTEND_URL;
-        res.redirect(returnTo);
+        // Successful authentication, redirect to appropriate frontend based on session source.
+        const source = req.session.source;
+        if (source === 'shopkeeper') {
+            res.redirect('http://localhost:5174/dashboard');
+        } else {
+            res.redirect('http://localhost:5173/dashboard');
+        }
     }
 );
 

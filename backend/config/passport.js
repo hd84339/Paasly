@@ -13,17 +13,36 @@ module.exports = function (passport) {
                 callbackURL: '/api/auth/google/callback',
             },
             async (accessToken, refreshToken, profile, done) => {
+                const email = profile.emails && profile.emails.length > 0 ? profile.emails[0].value : null;
+                
                 const newUser = {
                     googleId: profile.id,
                     name: profile.displayName,
-                    email: profile.emails[0].value,
-                    photoURL: profile.photos[0].value,
+                    email: email,
+                    photoURL: profile.photos && profile.photos.length > 0 ? profile.photos[0].value : '',
                 };
 
                 try {
-                    let user = await User.findOne({ googleId: profile.id });
+                    // Try to find user by email first, to prevent duplicate key errors
+                    // if they previously signed up manually with the same email.
+                    let user = null;
+                    if (email) {
+                        user = await User.findOne({ email: email.toLowerCase() });
+                    }
+                    
+                    if (!user) {
+                        user = await User.findOne({ googleId: profile.id });
+                    }
 
                     if (user) {
+                        // If user found but no googleId (manual signup), link the googleId
+                        if (!user.googleId) {
+                            user.googleId = profile.id;
+                            if (!user.photoURL && newUser.photoURL) {
+                                user.photoURL = newUser.photoURL;
+                            }
+                            await user.save();
+                        }
                         done(null, user);
                     } else {
                         user = await User.create(newUser);

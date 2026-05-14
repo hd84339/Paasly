@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const signInWithGoogle = () => {
-        window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`;
+        window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google?source=user`;
     };
 
     const login = async (email, password) => {

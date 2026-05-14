@@ -8,13 +8,15 @@ import Register from "../pages/Register/Register";
 import CreateShop from "../pages/CreateShop/CreateShop";
 import Dashboard from "../pages/Dashboard/Dashboard";
 
+import Landing from "../pages/Landing/Landing";
+
 function AppRoutes() {
 
     return (
         <BrowserRouter>
         
         <Routes>
-          < Route path="/" element={<Login />} />
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         
